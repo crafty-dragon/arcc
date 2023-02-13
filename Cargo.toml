@@ -7,4 +7,4 @@ license = "GPL-3.0-or-later"
 
 [dependencies]
 serde_json = "1.0.93"
-colorful = "0.2.2"
+colored = "2.0.0"
