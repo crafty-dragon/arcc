@@ -1,0 +1,9 @@
+[package]
+name = "arcc"
+version = "0.0.1"
+edition = "2021"
+licence = "GPL-3.0-or-later"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde_json = "1.0.93"
