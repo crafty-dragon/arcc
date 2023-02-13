@@ -6,8 +6,15 @@ version = 3
 name = "arcc"
 version = "0.0.1"
 dependencies = [
+ "colorful",
  "serde_json",
 ]
+
+[[package]]
+name = "colorful"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "97af0562545a7d7f3d9222fcf909963bec36dcb502afaacab98c6ffac8da47ce"
 
 [[package]]
 name = "itoa"
