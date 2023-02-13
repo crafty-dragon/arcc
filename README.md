@@ -1,1 +1,1 @@
-# arcc
+# Arbitrary RPG Character Creator
