@@ -1,4 +1,7 @@
+mod menus;
+
 use colored::{self, Colorize};
+use menus::menus::main_menu;
 use std::{
     fs::{self, File},
     io::{self, BufRead},
@@ -6,6 +9,11 @@ use std::{
 
 fn main() {
     init();
+    loop {
+        prompt();
+        gather_games();
+        let _choice = main_menu();
+    }
 }
 
 /// Initializes the main menu.
@@ -18,19 +26,22 @@ fn init() {
             .bold()
     );
 
-    // Prompts {#4bd,5}
+    //gather_games()
+}
+
+fn prompt() {
+    // Prompts {#4bd,6}
     // Uses +, -, ~, and ! as selection commands
     let add_prompt = "Add (+)".green().italic();
     let remove_prompt = "Remove (-)".red().italic();
     let edit_prompt = "Edit (~)".yellow().italic();
+    let help_prompt = "Help (?)".bright_blue().italic();
     let quit_prompt = "Quit (!)".black().on_red().italic();
 
     println!(
-        "{}, {}, {}, {}",
-        add_prompt, remove_prompt, edit_prompt, quit_prompt
+        "{}, {}, {}, {}, {}",
+        add_prompt, remove_prompt, edit_prompt, help_prompt, quit_prompt
     );
-
-    gather_games()
 }
 
 /// Gathers the list of games if found.
@@ -38,8 +49,10 @@ fn init() {
 fn gather_games() {
     let game_file = File::open("./assets/game_list.txt");
 
-    // Prompt to send if file is empty or every line results in error
-    let empty_file_prompt = "No games found, creating list.".purple().bold();
+    // Prompt to send if file is empty
+    let no_file_prompt = "No games found, creating list.".purple().bold();
+
+    let empty_file_prompt = "No games found".purple().bold();
 
     // Checks if game_file is a file, if so, list contents {#d21,14}
     if let Ok(file) = game_file {
@@ -61,6 +74,6 @@ fn gather_games() {
         // Is not checked for error as error means directory exist, or permission denied.
         let _asset_dir = fs::create_dir("./assets");
         let _game_file = File::create("./assets/game_list.txt");
-        println!("{}", empty_file_prompt);
+        println!("{}", no_file_prompt);
     }
 }
