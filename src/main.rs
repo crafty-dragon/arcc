@@ -1,7 +1,7 @@
 mod menus;
 
 use colored::{self, Colorize};
-use menus::menus::main_menu;
+use menus::menus::*;
 use std::{
     fs::{self, File},
     io::{self, BufRead},
@@ -12,7 +12,23 @@ fn main() {
     loop {
         prompt();
         gather_games();
-        let _choice = main_menu();
+        let choice = main_menu();
+
+        if let Err(e) = choice {
+            println!("An error has occured: {}", e);
+            continue;
+        }
+
+        let choice = choice.expect("Error was not caught.");
+
+        match choice {
+            Choice::Add => (),
+            Choice::Remove => (),
+            Choice::Edit => (),
+            Choice::Help => help(),
+            Choice::Quit => break,
+            Choice::Games(game) => game_menu(game),
+        }
     }
 }
 

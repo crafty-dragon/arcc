@@ -12,9 +12,9 @@ pub mod menus {
 
     pub(crate) fn main_menu() -> Result<Choice, Error> {
         let mut input = String::new();
-        let _choice = io::stdin().read_line(&mut input)?;
+        io::stdin().read_line(&mut input)?;
 
-        match input.as_str() {
+        match input.trim() {
             "+" => Ok(Choice::Add),
             "-" => Ok(Choice::Remove),
             "~" => Ok(Choice::Edit),
@@ -22,5 +22,13 @@ pub mod menus {
             "!" => Ok(Choice::Quit),
             s => Ok(Choice::Games(s.to_string())),
         }
+    }
+
+    pub(crate) fn game_menu(game: String) {
+        todo!()
+    }
+
+    pub(crate) fn help() {
+        todo!()
     }
 }
