@@ -22,10 +22,10 @@ fn main() {
         let choice = choice.expect("Error was not caught.");
 
         match choice {
-            Choice::Add => (),
-            Choice::Remove => (),
-            Choice::Edit => (),
-            Choice::Help => help(),
+            Choice::Add => add(),
+            Choice::Remove => remove(),
+            Choice::Edit => edit(),
+            Choice::Help => main_help(),
             Choice::Quit => break,
             Choice::Games(game) => game_menu(game),
         }
