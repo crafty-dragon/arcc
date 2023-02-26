@@ -1,7 +1,10 @@
 pub mod menus {
+
+    use crate::games::{*, games::GameFile};
+
     use std::{
         fs::File,
-        io::{self, BufRead, Error, Write},
+        io::{self, Error, Write},
     };
 
     use colored::Colorize;
@@ -36,7 +39,7 @@ pub mod menus {
     }
 
     pub(crate) fn game_menu(game: String) {
-        if !game_search(&game).expect("File did was not created after initialization.") {
+        if !games::game_search(&game).expect("File did was not created after initialization.") {
             let help_start_prompt = "The game you chose has not been added, yet. Giving help"
                 .black()
                 .on_white()
@@ -72,7 +75,7 @@ pub mod menus {
 
         let input = input.expect("Error was not caught");
 
-        let found = game_search(&input);
+        let found = games::game_search(&input);
 
         if let Err(e) = found {
             let error_message = format!("An error occuried. Details: {}", e).red().bold();
@@ -87,20 +90,28 @@ pub mod menus {
             return;
         }
 
-        let game_file = File::options().append(true).open("./assets/game_list.txt");
-        if let Err(e) = game_file{
+        let res_dir = GameFile::prep_dir(&GameFile::new(&input.trim().to_string()));
+        if let Err(_) = res_dir {
+            let error_message = "The above error occured, aborting add".red().italic().bold();
+            println!("{}", error_message);
+            return;
+        }
+
+        let game_list_file = File::options().append(true).open("./assets/game_list.txt");
+        if let Err(e) = game_list_file{
             let error_message = format!("An error occuried. Details: {}", e).red().bold();
             println!("{}", error_message);
             return;
         }
 
-        let mut game_file = game_file.expect("Error was not caught.");
-        let append_result = game_file.write(input.as_str().as_bytes());
+        let mut game_list_file = game_list_file.expect("Error was not caught.");
+        let append_result = game_list_file.write(input.as_str().as_bytes());
         if let Err(e) = append_result {
             let error_message = format!("An error occuried. Details: {}", e).red().bold();
             println!("{}", error_message);
             return;
         }
+
         
         println!("{}, has been added to your list.", input.trim());
 
@@ -116,16 +127,5 @@ pub mod menus {
         todo!()
     }
 
-    fn game_search(game: &String) -> Result<bool, Error> {
-        let game_file = File::open("./assets/game_list.txt")?;
-        let reader = io::BufReader::new(game_file);
-        for lines_read in reader.lines() {
-            if let Ok(game_line) = lines_read {
-                if game_line.trim().eq(game.trim()) {
-                    return Ok(true);
-                }
-            }
-        }
-        return Ok(false);
-    }
+    
 }
