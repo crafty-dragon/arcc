@@ -26,7 +26,10 @@ fn main() {
             Choice::Remove => main_remove(),
             Choice::Edit => main_edit(),
             Choice::Help => main_help(),
-            Choice::Quit => break,
+            Choice::Quit => {
+                println!("Goodbye!");    
+                break
+            },
             Choice::Games(game) => game_menu(game),
         }
     }

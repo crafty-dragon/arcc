@@ -108,6 +108,7 @@ pub mod menus {
     }
 
     pub(crate) fn main_remove() {
+        println!("{}", "Choose a game to remove it, all templates, and all characters".red().italic().bold());
         todo!()
     }
 
