@@ -1,10 +1,10 @@
 pub mod menus {
 
-    use crate::games::{*, games::GameFile};
+    use crate::{games::{*, games::{GameFile, game_search}}, print_error};
 
     use std::{
         fs::File,
-        io::{self, Error, Write},
+        io::{self, Error, Write}, fmt::format,
     };
 
     use colored::Colorize;
@@ -68,8 +68,7 @@ pub mod menus {
         println!("{}", "Input name of game you wish to add".green().bold());
         let input = get_input();
         if let Err(e) = input {
-            let error_message = format!("An error occuried. Details: {}", e).red().bold();
-            println!("{}", error_message);
+            print_error(e);
             return;
         }
 
@@ -78,8 +77,7 @@ pub mod menus {
         let found = games::game_search(&input);
 
         if let Err(e) = found {
-            let error_message = format!("An error occuried. Details: {}", e).red().bold();
-            println!("{}", error_message);
+            print_error(e);
             return;
         }
 
@@ -99,16 +97,14 @@ pub mod menus {
 
         let game_list_file = File::options().append(true).open("./assets/game_list.txt");
         if let Err(e) = game_list_file{
-            let error_message = format!("An error occuried. Details: {}", e).red().bold();
-            println!("{}", error_message);
+            print_error(e);
             return;
         }
 
         let mut game_list_file = game_list_file.expect("Error was not caught.");
         let append_result = game_list_file.write(input.as_str().as_bytes());
         if let Err(e) = append_result {
-            let error_message = format!("An error occuried. Details: {}", e).red().bold();
-            println!("{}", error_message);
+            print_error(e);
             return;
         }
 
@@ -120,7 +116,47 @@ pub mod menus {
 
     pub(crate) fn main_remove() {
         println!("{}", "Choose a game to remove it, all templates, and all characters".red().italic().bold());
-        todo!()
+        let input_game = get_input();
+        if let Err(e) = input_game{
+            print_error(e);
+            return;
+        }
+        let input_game = input_game.expect("Not caught");
+
+        let found = game_search(&input_game);
+        if let Err(e) = found{
+            print_error(e);
+            return;
+        }
+
+        if !found.expect("Not caught") {
+            println!("{}", "Game is not found for removal.".on_red());
+            return;
+        }
+
+        let disclaimer_msg = format!("Do you understand that by deleting {}, that all characters and templates will also be deleted? \nIf so, type the following exactly:", input_game.trim()).red().italic(); 
+        let typed_string = "I understand that this is permanent.".to_string();
+        let typed_statement = typed_string.red().on_bright_white().italic();
+        println!("{}", disclaimer_msg);
+        println!("{}", typed_statement);
+
+        let input = get_input();
+        if let Err(e) = input{
+            print_error(e);
+            return;
+        }
+
+        let input = input.expect("Not caught");
+
+        if !input.trim().eq(&typed_string){
+            let abort_message = "Disclaimer not acknowledged. \nAborting delete.".yellow().bold();
+            println!("{}", abort_message);
+            return;
+        }
+
+
+        
+
     }
 
     pub(crate) fn main_edit() {

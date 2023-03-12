@@ -1,6 +1,8 @@
 mod menus;
 mod games;
 
+use std::fmt::Display;
+
 use colored::{self, Colorize};
 use games::games::*;
 use menus::menus::*;
@@ -14,7 +16,7 @@ fn main() {
         let choice = main_menu();
 
         if let Err(e) = choice {
-            println!("An error has occured: {}", e);
+            print_error(e);
             continue;
         }
 
@@ -60,4 +62,9 @@ fn prompt() {
         "{}, {}, {}, {}, {}",
         add_prompt, remove_prompt, edit_prompt, help_prompt, quit_prompt
     );
+}
+
+pub(crate) fn print_error<T: Display>(e :T){
+    let error_message = format!("An error occured. Details: {}", e).red().bold();
+    println!("{}", error_message);
 }
