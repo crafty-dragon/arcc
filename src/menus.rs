@@ -3,8 +3,8 @@ pub mod menus {
     use crate::{games::{*, games::{GameFile, game_search}}, print_error};
 
     use std::{
-        fs::File,
-        io::{self, Error, Write}, fmt::format,
+        fs::{File, self},
+        io::{self, Error, Write, BufRead}, fmt::format,
     };
 
     use colored::Colorize;
@@ -134,7 +134,8 @@ pub mod menus {
             return;
         }
 
-        let disclaimer_msg = format!("Do you understand that by deleting {}, that all characters and templates will also be deleted? \nIf so, type the following exactly:", input_game.trim()).red().italic(); 
+        let disclaimer_msg = 
+            format!("Do you understand that by deleting {}, that all characters and templates will also be deleted? \nIf so, type the following exactly:", input_game.trim()).red().italic(); 
         let typed_string = "I understand that this is permanent.".to_string();
         let typed_statement = typed_string.red().on_bright_white().italic();
         println!("{}", disclaimer_msg);
@@ -153,7 +154,71 @@ pub mod menus {
             println!("{}", abort_message);
             return;
         }
-        //TODO: remove files.
+
+        let removed_dir = GameFile::new(&input_game.trim().to_string());
+
+        let game_list_file = File::open("./assets/game_list.txt");
+        let new_game_list = File::create("./assets/game_list_new.txt");
+
+        if let Err(e) = game_list_file{
+            print_error(e);
+            let removal = fs::remove_file("./assets/game_list_new.txt");
+            if let Err(e) = removal {
+                print_error(e);
+            }
+            return;
+        }
+
+        if let Err(e) = new_game_list{
+            print_error(e);
+            return;
+        }
+
+        let game_list_file = game_list_file.expect("Not caught!");
+        let mut new_game_list = new_game_list.expect("Not caught");
+        let reader_old = io::BufReader::new(game_list_file);
+
+        for lines_compare in reader_old.lines(){
+            if let Err(e) = lines_compare{
+                print_error(e);
+                let removal = fs::remove_file("./assets/game_list_new.txt");
+                if let Err(e) = removal {
+                    print_error(e);
+                }
+                continue;
+            }
+            let line = lines_compare.expect("Not caught!");
+
+            if line.trim().eq(input_game.trim()){
+                continue;
+            }
+
+            let copy_res = new_game_list.write(line.as_bytes());
+            if let Err(e) = copy_res {
+                print_error(e);
+                let removal = fs::remove_file("./assets/game_list_new.txt");
+                if let Err(e) = removal {
+                    print_error(e);
+                }
+            }
+
+        }
+
+
+
+        let removal = fs::remove_dir_all(removed_dir.get_dir());
+
+        if let Err(e) = removal {
+            print_error(e);
+            return;
+        }
+
+        let _delete_original = fs::remove_file("./assets/game_list.txt");
+        let _rename_new = fs::rename("./assets/game_list_new.txt", "./assets/game_list.txt");
+
+        let deleted_successful_message = format!("{}, has successfully been removed.", 
+            input_game.trim()).black().on_bright_white();
+        println!("{}", deleted_successful_message);
 
 
         

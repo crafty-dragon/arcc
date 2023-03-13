@@ -60,6 +60,10 @@ pub mod games{
 
             Ok(())
         }
+
+        pub(crate) fn get_dir(self: &Self) -> String {
+            self.dir_path.clone()
+        }
     }    
 
     ///Searches the list of games for a chosen game, if there return Ok(true)
