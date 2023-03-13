@@ -4,7 +4,7 @@ pub mod menus {
 
     use std::{
         fs::{File, self},
-        io::{self, Error, Write, BufRead}, fmt::format,
+        io::{self, Error, Write, BufRead},
     };
 
     use colored::Colorize;
